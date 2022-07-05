@@ -1,0 +1,425 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pyautogui实现QQ自动点赞（PC版） | 杂文小铺</title>
+<link rel="shortcut icon" href="https://wzyskq.github.io/pw2//favicon.ico?v=1657034633222">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://wzyskq.github.io/pw2//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Pyautogui实现QQ自动点赞（PC版） | 杂文小铺 - Atom Feed" href="https://wzyskq.github.io/pw2//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+Tips：本篇文章适合有一定基础的兄弟，大佬直接略过
+原文在csdn上，但是没有通过审核😭
+
+
+前言
+一、原理
+二、使用步骤
+
+1.引入库
+2.打开QQ的点赞界面
+3.自动点赞
+4.成品展示
+
+
+三、附录
+
+1.实时获取鼠标位置
+2.p..." />
+    <meta name="keywords" content="Python" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://wzyskq.github.io/pw2/">
+  <img class="avatar" src="https://wzyskq.github.io/pw2//images/avatar.png?v=1657034633222" alt="">
+  </a>
+  <h1 class="site-title">
+    杂文小铺
+  </h1>
+  <p class="site-description">
+    人生忽如寄，莫辜负茶、汤、好天气
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="https://wzyskq.github.io/pw2/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="https://wzyskq.github.io/pw2/tags/" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://wzyskq.github.io/pw2/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Pyautogui实现QQ自动点赞（PC版）
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-04-29
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+                <a href="https://wzyskq.github.io/pw2/tag/0n3i0C0df/" class="post-tag">
+                  # Python
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <blockquote>
+<p>Tips：本篇文章适合有一定基础的兄弟，大佬直接略过<br>
+原文在csdn上，但是没有通过审核😭</p>
+</blockquote>
+<p><ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E4%B8%80-%E5%8E%9F%E7%90%86">一、原理</a></li>
+<li><a href="#%E4%BA%8C-%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4">二、使用步骤</a>
+<ul>
+<li><a href="#1%E5%BC%95%E5%85%A5%E5%BA%93">1.引入库</a></li>
+<li><a href="#2%E6%89%93%E5%BC%80qq%E7%9A%84%E7%82%B9%E8%B5%9E%E7%95%8C%E9%9D%A2">2.打开QQ的点赞界面</a></li>
+<li><a href="#3%E8%87%AA%E5%8A%A8%E7%82%B9%E8%B5%9E">3.自动点赞</a></li>
+<li><a href="#4%E6%88%90%E5%93%81%E5%B1%95%E7%A4%BA">4.成品展示</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89-%E9%99%84%E5%BD%95">三、附录</a>
+<ul>
+<li><a href="#1%E5%AE%9E%E6%97%B6%E8%8E%B7%E5%8F%96%E9%BC%A0%E6%A0%87%E4%BD%8D%E7%BD%AE">1.实时获取鼠标位置</a></li>
+<li><a href="#2pyautogui%E7%9A%84%E5%85%B6%E4%BB%96%E5%8A%9F%E8%83%BD">2.pyautogui的其他功能</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+</p>
+<h1 id="前言">前言</h1>
+<p>最近有许多的小伙伴给我QQ名片点赞，但是数量太多了，回赞到手酸＞﹏＜<br>
+于是，我找到了<a href="https://hamibot.com/">hamibot</a>这个自动化脚本软件，可是最近发现自己编写的点赞脚本没反应〒▽〒<br>
+因此，我为其编写了自动点赞的代码ヾ(≧▽≦*)o<br>
+<code>Tips：为了方便演示，本文集成开发环境为Pycharm(～￣▽￣)～</code></p>
+<h1 id="一-原理">一、原理</h1>
+<p>使用python中的<strong>pyautogui</strong>模块进行模拟鼠标控制，并比对屏幕中指定图片的位置，实现自动点赞功能<br>
+<a href="https://pyautogui.readthedocs.io/en/latest/">文档链接在这里（￣︶￣）↗　</a></p>
+<h1 id="二-使用步骤">二、使用步骤</h1>
+<h2 id="1引入库">1.引入库</h2>
+<p><strong>方法一</strong><br>
+cmd中输入</p>
+<pre><code class="language-shell">pip install pyautogui
+</code></pre>
+<p><strong>方法二</strong></p>
+<pre><code class="language-python">import pyautogui as gui
+</code></pre>
+<p>如果出现红色下划线，就把光标移到那里，点击下面的蓝字<br>
+<img src="https://img-blog.csdnimg.cn/d6e62ff50b684feea08a2750bd2b7096.png#pic_center" alt="安装gui" loading="lazy"></p>
+<h2 id="2打开qq的点赞界面">2.打开QQ的点赞界面</h2>
+<p><strong>方法一</strong> 手动定位坐标</p>
+<p>利用pyautogui点击图标</p>
+<pre><code class="language-python">import pyautogui as gui
+gui.click(x ,y)  # QQ在任务栏小图标的位置
+</code></pre>
+<p>pyautogui内置一个position()函数，它能获取鼠标的位置，稍加改进，我们便能实时获取鼠标的位置</p>
+<pre><code class="language-python">import pyautogui as gui
+while True:
+    lp = gui.position()
+    if lp != gui.position():
+        print(gui.position())
+'''
+position()能获取鼠标位置
+如果鼠标移动，就打印位置
+'''
+</code></pre>
+<p>输入任务栏QQ图标的坐标，运行一下，成功弹出主界面，然后重复上述操作，获取各个控件的坐标，进入点赞主面板.</p>
+<figure data-type="image" tabindex="1"><img src="https://img-blog.csdnimg.cn/1583b7841533473c966d9639f780c19f.png#pic_left" alt="任务栏图标" loading="lazy"></figure>
+<p><img src="https://img-blog.csdnimg.cn/1e6914e42238408db369e2c4f2c7bc83.png#pic_left" alt="点赞主面板" loading="lazy"><br>
+<img src="https://img-blog.csdnimg.cn/5e54d7d0976a49199d3f6550a65cde66.png#pic_left" alt="点赞主面板" loading="lazy"><br>
+<img src="https://img-blog.csdnimg.cn/a165bbd697f6418e99c664f86ee367d0.png#pic_left" alt="点赞主面板" loading="lazy"><br>
+咳咳咳，今天的赞有点少≡(▔﹏▔)≡</p>
+<pre><code class="language-python"># 模板
+import time
+import pyautogui as gui
+
+gui.click(x1, y1)  # 点击QQ图标
+time.sleep(0.5)
+
+gui.click(x2, y2)  # 点击头像
+time.sleep(0.5)
+
+gui.click(x3, y3)  # 点击赞标
+time.sleep(0.5)
+</code></pre>
+<p><code>Tip:这里要导入time模块，为QQ提供反应时间；如果反应时间太长，可以适当增加反应时间</code></p>
+<p><strong>方法二</strong> 自动截屏定位<br>
+pyautogui内置locateOnScreen()函数，它能捕获屏幕，并定位你给它的图片，非常的nice！！<br>
+(首先你要截目标按钮的图)</p>
+<pre><code class="language-python">import pyautogui as gui
+
+bl1 = gui.locateOnScreen('p3.png', confidence=0.9)
+# print(bl1)  # Box(left=1575, top=1042, width=22, height=28)
+bl2 = gui.center(bl1)  # 定位这个区域的中心
+# print(bl2)  # Point(x=1586, y=1056)
+blx, bly = bl2
+gui.click(blx, bly)
+</code></pre>
+<p>⇩ 这个就是p3.png<br>
+<img src="https://img-blog.csdnimg.cn/a1d148d9f769415e84acce66e0336791.png" alt="p3" loading="lazy"><br>
+<code>Tips:用这个功能需要另外两个库支持！</code><br>
+<code>①Pillow：这个库用来截图</code><br>
+<code>②opencv-python：这个库用来增加容错率[代码中的confidence(自信)参数]</code><br>
+下载方法同上<br>
+这里要强调一下opencv-python这个库：</p>
+<ol>
+<li>confindence的值∈(1,-∞)，数值越大，容错率越小，准确率越高<br>
+如果≥1，则会报错</li>
+<li>尽量把confindence这个参数加上，如果不加，第二天就会发现识别失败<br>
+（原文：函数由于像素差异可以忽略不计而无法定位图像）</li>
+<li>这个库比较大，后期不建议打包成exe文件（本来10MB的东西直接增加50MB＞︿＜）<br>
+当然有需要的打包也可以</li>
+<li>另外，这个函数运行时间较长（1-2s），如果加了confidence参数可以缩小到0.5s以内</li>
+</ol>
+<p>其实上述代码可以进一步简化[ locateCenterOnScreen() ]，它直接反馈中心坐标</p>
+<pre><code class="language-python">import pyautogui as gui
+
+x1, y1 = gui.locateCenterOnScreen('E:\\py\\exe_test\\qq.png', confidence=0.9)
+gui.click(x1, y1)
+</code></pre>
+<p>这里我用的是绝对路径，相对路径也可以，具体选择就看个人习惯啦<br>
+重复方法一的步骤进入点赞界面即可<br>
+在啰嗦一句，这回预留时间很重要！(时间可调整)</p>
+<pre><code class="language-python"># 模板
+import pyautogui as gui
+import time
+
+x1, y1 = gui.locateCenterOnScreen('图片名1', confidence=0.9)  # 点击Q标
+time.sleep(1)
+gui.click(x1, y1)
+time.sleep(0.5)
+
+x2, y2 = gui.locateCenterOnScreen('图片名2', confidence=0.9)  # 点击头像
+time.sleep(1)
+gui.click(x2, y2)
+time.sleep(0.5)
+
+x3, y3 = gui.locateCenterOnScreen('图片名3', confidence=0.9)  # 点击赞标
+time.sleep(1)
+gui.click(x3, y3)
+time.sleep(0.5)
+</code></pre>
+<h2 id="3自动点赞">3.自动点赞</h2>
+<p>自动点赞这部分我只推荐用locateCenterOnScreen（）这个方法，代码如下</p>
+<pre><code class="language-python">def selfclick():
+    for _ in range(5):
+        x1, y1 = gui.locateCenterOnScreen('d2.png', confidence=0.9)
+        time.sleep(0.5)
+        for _ in range(11):  # 次数可更改(我穷,只能点10个赞;多1个赞防止漏点,会员调成21即可)
+            gui.click(x1, y1)
+            time.sleep(0.1)
+</code></pre>
+<p>⇩ 这个就是d2.png<br>
+<img src="https://img-blog.csdnimg.cn/29eb1f4e15a048a7bfbb24da4050dda6.png" alt="d2" loading="lazy"><br>
+点赞后它会变蓝，剩下的10次点赞还是锁定在原坐标上</p>
+<h2 id="4成品展示">4.成品展示</h2>
+<p>稍加修饰，你就得到了它：<br>
+<code>Ps：如果有疑问，那就去附录上看看叭</code></p>
+<pre><code class="language-python">import pyautogui as gui
+import time
+import sys
+
+
+def selfclick():
+    for _ in range(5):
+        x3, y3 = gui.locateCenterOnScreen('d2.png', confidence=0.9)
+        time.sleep(0.5)
+        for _ in range(11):
+            gui.click(x3, y3)
+            time.sleep(0.1)
+
+if __name__ == '__main__':
+	# 点击Q标
+    try:
+        x1, y1 = gui.locateCenterOnScreen('qq.png', confidence=0.9)
+        gui.click(x1, y1)
+    except:
+        gui.alert(text='找不到企鹅图标', title='警告', button='OK')
+        sys.exit()  # 自动推出
+    time.sleep(1)
+    
+	# 点击头像
+    gui.click(1345, 85)
+    time.sleep(1)
+    
+	# 点击赞标,进入点赞主面板
+    x2, y2 = gui.locateCenterOnScreen('d1.png', confidence=0.9)
+    time.sleep(1)
+    gui.click(x2, y2)
+    time.sleep(0.5)
+    
+    # 循环点赞
+    for _ in range(8):  # 如果好友多,次数就多一点,反之亦然
+        try:
+            time.sleep(0.5)
+            selfclick()
+        except:
+            time.sleep(0.35)
+            gui.scroll(-300)  # 如果好友多,数值就再调小一点,反之亦然
+            time.sleep(0.35)
+    # 关闭窗口        
+    gui.hotkey('alt', 'f4')
+    time.sleep(0.1)
+    gui.hotkey('alt', 'f4')
+    time.sleep(0.1)
+    sys.exit()
+</code></pre>
+<p>记得要更改一下坐标，图片要自己截哈q(≧▽≦q)</p>
+<h1 id="三-附录">三、附录</h1>
+<h2 id="1实时获取鼠标位置">1.实时获取鼠标位置</h2>
+<pre><code class="language-python">import pyautogui as gui
+while True:
+    lp = gui.position()
+    if lp != gui.position():
+        print(gui.position())
+</code></pre>
+<h2 id="2pyautogui的其他功能">2.pyautogui的其他功能</h2>
+<pre><code class="language-python">import pyautogui as gui
+
+# 发出弹窗
+gui.alert(text='找不到企鹅图标', title='警告', button='OK')
+
+# 鼠标滚轮
+gui.scorll(-300)  # 默认向上滚动,向下滚动要加负号
+# 输入数值的绝对值越大,滚轮滚得越长
+
+# 快捷键
+gui.hotkey('alt', 'f4')  # 先按alt键,再按f4,随后顺次松开
+# 其他按键也一样 
+</code></pre>
+<p>弹窗长这样( •̀ ω •́ )✧<br>
+<img src="https://img-blog.csdnimg.cn/33fce0ff47194cf5a478f7011675c6da.png#pic_center" alt="弹窗
+" loading="lazy"></p>
+<h1 id="总结">总结</h1>
+<p>以上就是今天要讲的内容啦，感谢阅读！更多有关pyautogui的用法请前往官网。这是鄙人第一次写文章，可能有许多不足之处，欢迎在评论区提出建议O(∩_∩)O</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%89%8D%E8%A8%80">前言</a></li>
+<li><a href="#%E4%B8%80-%E5%8E%9F%E7%90%86">一、原理</a></li>
+<li><a href="#%E4%BA%8C-%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4">二、使用步骤</a>
+<ul>
+<li><a href="#1%E5%BC%95%E5%85%A5%E5%BA%93">1.引入库</a></li>
+<li><a href="#2%E6%89%93%E5%BC%80qq%E7%9A%84%E7%82%B9%E8%B5%9E%E7%95%8C%E9%9D%A2">2.打开QQ的点赞界面</a></li>
+<li><a href="#3%E8%87%AA%E5%8A%A8%E7%82%B9%E8%B5%9E">3.自动点赞</a></li>
+<li><a href="#4%E6%88%90%E5%93%81%E5%B1%95%E7%A4%BA">4.成品展示</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89-%E9%99%84%E5%BD%95">三、附录</a>
+<ul>
+<li><a href="#1%E5%AE%9E%E6%97%B6%E8%8E%B7%E5%8F%96%E9%BC%A0%E6%A0%87%E4%BD%8D%E7%BD%AE">1.实时获取鼠标位置</a></li>
+<li><a href="#2pyautogui%E7%9A%84%E5%85%B6%E4%BB%96%E5%8A%9F%E8%83%BD">2.pyautogui的其他功能</a></li>
+</ul>
+</li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://wzyskq.github.io/pw2//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
